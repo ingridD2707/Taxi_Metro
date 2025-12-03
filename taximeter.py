@@ -1,4 +1,7 @@
 import time
+from logging_setup import setup_logger
+
+logger = setup_logger()
 
 def calculate_fare(seconds_stopped, seconds_moving):
     """
@@ -27,6 +30,7 @@ def taximeter():
         if command == "start":
             if trip_activate:
                 print("Error: a trip is already in progress.")
+                logger.warning("Start command received but trip already active.")
                 continue
 
             trip_activate = True
@@ -35,6 +39,8 @@ def taximeter():
             state = "stopped"
             state_start_time = time.time()
             print("Trip started. Initial state: 'stopped'")
+            #log del inicio del trayecto
+            logger.info("trip started. State: stopped")
 
         
         elif command in ("stop", "move"):
@@ -53,7 +59,7 @@ def taximeter():
             state_start_time = time.time()
             print(f"State changed to '{state}'.")
 
-        # FINISH
+      
         elif command == "finish":
             if not trip_activate:
                 print("Error: No active trip to finish.")
@@ -73,6 +79,9 @@ def taximeter():
             total_fare = calculate_fare(stopped_time, moving_time)
             print(f"Total fare: €{total_fare:.2f}")
             print("---------------------\n")
+            
+            # log fin del trayecto
+            logger.info(f"Trip finished. Stopped={stopped_time:.1f}s, Moving={moving_time:.1f}s, fare={total_fare:.2f}€")
 
             trip_activate = False
             state = None
