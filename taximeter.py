@@ -30,7 +30,10 @@ def taximeter():
         if command == "start":
             if trip_activate:
                 print("Error: a trip is already in progress.")
+                
+                #log para cuando el usuario intenta iniciar un viaje  cuando ya hay un viaje en curso
                 logger.warning("Start command received but trip already active.")
+                
                 continue
 
             trip_activate = True
@@ -39,6 +42,7 @@ def taximeter():
             state = "stopped"
             state_start_time = time.time()
             print("Trip started. Initial state: 'stopped'")
+            
             #log del inicio del trayecto
             logger.info("trip started. State: stopped")
 
@@ -46,6 +50,10 @@ def taximeter():
         elif command in ("stop", "move"):
             if not trip_activate:
                 print("Error: No active trip. Please start first.")
+                
+                #log de advertencia p/ cuando el usuario  ingresa un comando invalido si no hay un viaje
+                logger.warning(f"Command '{command}'received but trip nop active.")
+               
                 continue
 
             duration = time.time() - state_start_time
@@ -58,6 +66,9 @@ def taximeter():
             state = "stopped" if command == "stop" else "moving"
             state_start_time = time.time()
             print(f"State changed to '{state}'.")
+            
+            #logs de cambio de estado.
+            logger.info(f"State changed to: {state}.")
 
       
         elif command == "finish":
@@ -89,6 +100,10 @@ def taximeter():
        
         elif command == "exit":
             print("Exiting the program, goodbye!")
+            
+            #log de salida del programa 
+            logger.info("Program exited by user.")
+            
             break
 
         
