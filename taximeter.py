@@ -10,6 +10,12 @@ def calculate_fare(seconds_stopped, seconds_moving):
     """
     fare = seconds_stopped * 0.02 + seconds_moving * 0.05
     print(f"Este es el total: {fare}€")
+    
+    """
+    log para registrar la tarifa calculada
+    """
+    logger.info(f"fare clculated: stopped={seconds_stopped:.1f}s, moving={seconds_moving:.1f}s, total={fare:.2f}€")
+    
     return fare
 
 
@@ -74,6 +80,11 @@ def taximeter():
         elif command == "finish":
             if not trip_activate:
                 print("Error: No active trip to finish.")
+                
+                #log de finish invalido, ej: si no hay viaje
+                
+                logger.warning("finish command received but no active trip.")
+                
                 continue
 
             duration = time.time() - state_start_time
@@ -109,6 +120,10 @@ def taximeter():
         
         else:
             print("Unknown command. Use: 'start', 'stop', 'move', 'finish', or 'exit'")
+            
+            #log de comando invalido
+            
+            logger.warning(f"Invalid command received: {command}")
 
 
 if __name__ == "__main__":
