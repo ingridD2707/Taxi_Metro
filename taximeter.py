@@ -4,18 +4,20 @@ from datetime import datetime
 
 logger = setup_logger()
 
+initial_price = 2
+
 def calculate_fare(seconds_stopped, seconds_moving):
     """
     función para calcular la tarifa total en euros
     stopped:0.02€/s moving:0.05€/s
     """
-    fare = seconds_stopped * 0.02 + seconds_moving * 0.05
+    fare = initial_price + seconds_stopped * 0.02 + seconds_moving * 0.05
     print(f"Este es el total: {fare}€")
     
     """
     log para registrar la tarifa calculada
     """
-    logger.info(f"fare clculated: stopped={seconds_stopped:.1f}s, moving={seconds_moving:.1f}s, total={fare:.2f}€")
+    logger.info(f"fare calculated: initial ={initial_price}€, stopped={seconds_stopped:.1f}s, moving={seconds_moving:.1f}s, total={fare:.2f}€")
     
     return fare
 
@@ -27,12 +29,12 @@ def save_history(seconds_stopped, seconds_moving, fare, filename="history.txt"):
     """
     #aqui formateamos los valores para que el archivo sea legible.
     timestamp = datetime.now().isoformat(sep='T', timespec='seconds')
-    line = f"{timestamp} | stopped: {seconds_stopped:.1f}s | moving: {seconds_moving:.1f}s | fare: €{fare:.2f}\n"
+    line = f"{timestamp} |initial: €{initial_price:.2f}| stopped: {seconds_stopped:.1f}s | moving: {seconds_moving:.1f}s | fare: €{fare:.2f}\n"
     
     try: 
         with open(filename, 'a', encoding="utf-8") as f: f.write(line)
         
-        #log para informar que se gurgo correctamente
+        #log para informar que se guardo correctamente
         logger.info(f"trip saved to {filename}: {line.strip()}")
     
     except Exception as e:
@@ -118,6 +120,7 @@ def taximeter():
                 moving_time += duration
 
             print("\n--- Trip Summary ---")
+            print(f"initial fare: €{initial_price:2f}")
             print(f"Stopped time: {stopped_time:.1f} seconds")
             print(f"Moving time: {moving_time:.1f} seconds")
 
