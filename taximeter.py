@@ -1,78 +1,16 @@
 import time
-import json
 from logging_setup import setup_logger
-from datetime import datetime
 
 logger = setup_logger()
-
-def load_config(filename = "config.json"):
-    """
-    función para cargar la configuración, devuelve los valores.
-    """
-    try:
-        with open(filename, 'r', encoding="utf-8") as f: 
-            config =  json.load(f)
-            
-            #log de carga de config.json
-            logger.info(f"Configuration loaded: {config}")
-            return config
-    except Exception as e:
-         
-         #log error de carga
-         logger.error(f"failed to load configuration. Using deafults. Error:{e}")
-         
-         #aqui agregamos valores por defecto por si falla nuestro config.json
-    return {
-            "initial_price": 2.0,
-            "stopped_rate": 0.02,
-            "moving_rate": 0.05
-        }
-        
-#cargamos la configuración, llamado a nuestra función       
-config = load_config()    
-
-#los gurdamos en variables 
-initial_price = config["initial_price"]
-stopped_rate = config["stopped_rate"]
-moving_rate = config["moving_rate"]
-
 
 def calculate_fare(seconds_stopped, seconds_moving):
     """
     función para calcular la tarifa total en euros
     stopped:0.02€/s moving:0.05€/s
     """
-    fare = initial_price + seconds_stopped * stopped_rate + seconds_moving * moving_rate
+    fare = seconds_stopped * 0.02 + seconds_moving * 0.05
     print(f"Este es el total: {fare}€")
-    
-    """
-    log para registrar la tarifa calculada
-    """
-    logger.info(f"fare calculated: initial ={initial_price}€, stopped_rate={stopped_rate}€/s, moving_rate={moving_rate}€/s,stopped={seconds_stopped:.1f}s, moving={seconds_moving:.1f}s, total={fare:.2f}€")
-    
     return fare
-
-def save_history(seconds_stopped, seconds_moving, fare, filename="history.txt"):
-    """
-    función para guardar en una linea de nuestro archivo =>history.txt, los datos relacionados con un viaje 
-     y utilizamos el modo de apertura "a", para que cree el archivo si no existe o de lo contrario,
-     que lo abra y sin borrar el historico anterior lo  agregue en la ultima linea.
-    """
-    #aqui formateamos los valores para que el archivo sea legible.
-    timestamp = datetime.now().isoformat(sep='T', timespec='seconds')
-    line = f"{timestamp} |initial: €{initial_price:.2f} | stopped_rate: {stopped_rate}/s| moving_rate: {moving_rate}/s | stopped: {seconds_stopped:.1f}s | moving: {seconds_moving:.1f}s | fare: €{fare:.2f}\n"
-    
-    try: 
-        with open(filename, 'a', encoding="utf-8") as f: f.write(line)
-        
-        #log para informar que se guardo correctamente
-        logger.info(f"trip saved to {filename}: {line.strip()}")
-    
-    except Exception as e:
-        # log para registrar un error al escribir en el archivo    
-        
-        logger.error(f"failed to write to {filename}:{e}")
-            
 
 
 def taximeter():
@@ -113,8 +51,8 @@ def taximeter():
             if not trip_activate:
                 print("Error: No active trip. Please start first.")
                 
-                #log de advertencia para cuando el usuario  ingresa un comando invalido si no hay un viaje
-                logger.warning(f"Command '{command}'received but trip not active.")
+                #log de advertencia p/ cuando el usuario  ingresa un comando invalido si no hay un viaje
+                logger.warning(f"Command '{command}'received but trip nop active.")
                
                 continue
 
@@ -136,11 +74,6 @@ def taximeter():
         elif command == "finish":
             if not trip_activate:
                 print("Error: No active trip to finish.")
-                
-                #log de finish invalido, ej: si no hay viaje
-                
-                logger.warning("finish command received but no active trip.")
-                
                 continue
 
             duration = time.time() - state_start_time
@@ -151,7 +84,6 @@ def taximeter():
                 moving_time += duration
 
             print("\n--- Trip Summary ---")
-            print(f"initial price: €{initial_price:.2f}")
             print(f"Stopped time: {stopped_time:.1f} seconds")
             print(f"Moving time: {moving_time:.1f} seconds")
 
@@ -161,9 +93,6 @@ def taximeter():
             
             # log fin del trayecto
             logger.info(f"Trip finished. Stopped={stopped_time:.1f}s, Moving={moving_time:.1f}s, fare={total_fare:.2f}€")
-            
-            #aqui al terminar el viaje guardamos en nuestro archivo history.txt
-            save_history(stopped_time, moving_time, total_fare)
 
             trip_activate = False
             state = None
@@ -180,10 +109,6 @@ def taximeter():
         
         else:
             print("Unknown command. Use: 'start', 'stop', 'move', 'finish', or 'exit'")
-            
-            #log de comando invalido
-            
-            logger.warning(f"Invalid command received: {command}")
 
 
 if __name__ == "__main__":

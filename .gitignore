@@ -65,13 +65,6 @@ db.sqlite3-journal
 # Flask stuff:
 instance/
 .webassets-cache
-# Archivos generados por el programa
-history.txt
-taximeter.log
-
-# Opcional: cualquier archivo .log
-*.log
-
 
 # Scrapy stuff:
 .scrapy
