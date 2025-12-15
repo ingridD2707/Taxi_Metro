@@ -3,7 +3,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+# Históricos y datos generados
+history.txt
 # C extensions
 *.so
 

@@ -1,3 +1,0 @@
-2025-12-04T10:37:09 | stopped: 23.2s | moving: 8.0s | fare: €0.86
-2025-12-04T11:24:03 |initial: €2.00| stopped: 20.6s | moving: 20.7s | fare: €3.45
-2025-12-04T15:13:55 |initial: €2.00 | stopped_rate: 0.02/s| moving_rate: 0.05/s | stopped: 34.4s | moving: 6.4s | fare: €3.01
